@@ -124,65 +124,114 @@ class _HomeBodyState extends State<HomeBody> {
               SliverToBoxAdapter(
                 child: CustomCarouselSliderWidget(),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'icon.png',
-                        height: 42,
-                        width: 42,
-                      ),
-                      const SizedBox(width: 20),
-                      const Text(
-                        'Bestsellers',
-                        style: TextStyle(
-                          fontSize: 42,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               SliverLayoutBuilder(builder: (context, constraints) {
                 return SliverToBoxAdapter(
                   child: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxWidth: 1200.0,
+                        maxWidth: 1250.0,
                       ),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 300.0,
-                          mainAxisExtent: 400.0,
-                          mainAxisSpacing: 15.0,
-                          crossAxisSpacing: 15.0,
-                        ),
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => ProductBody(
-                                    id: product.id,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Image.asset(
+                                  'icon.png',
+                                  height: 42,
+                                  width: 42,
+                                ),
+                                const SizedBox(width: 20),
+                                const Text(
+                                  'Ähli Harytlar',
+                                  style: TextStyle(
+                                    fontSize: 42,
                                   ),
                                 ),
-                              );
-                            },
-                            child: ProductWidget(
-                              title: product.title ?? '',
-                              image: product.image ?? '',
-                              price: product.price ?? 0.0,
+                              ],
                             ),
-                          );
-                        },
-                        itemCount:
-                            ((products.length) > 8) ? 8 : products.length,
+                            SizedBox(height: 32.0),
+                            GridView.builder(
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 300.0,
+                                mainAxisExtent: 400.0,
+                                mainAxisSpacing: 15.0,
+                                crossAxisSpacing: 15.0,
+                              ),
+                              itemBuilder: (context, index) {
+                                final product = products[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ProductBody(
+                                          id: product.id,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ProductWidget(
+                                    ontap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ProductBody(
+                                            id: product.id,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    title: product.title ?? '',
+                                    image: product.image ?? '',
+                                    price: product.price ?? 0.0,
+                                  ),
+                                );
+                              },
+                              itemCount:
+                                  ((products.length) > 8) ? 8 : products.length,
+                            ),
+                            SizedBox(height: 32.0),
+                            TextButton(
+                              onPressed: () {},
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  const Color.fromARGB(255, 20, 146, 83),
+                                ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                ),
+                              ),
+                              child: const SizedBox(
+                                height: 45,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.shopping_cart,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 12.0),
+                                    Text(
+                                      'View Product',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -315,12 +364,14 @@ class ProductWidget extends StatefulWidget {
   final String title;
   final String image;
   final double price;
+  final VoidCallback ontap;
 
   const ProductWidget({
     super.key,
     required this.title,
     required this.image,
     required this.price,
+    required this.ontap,
   });
 
   @override
@@ -389,9 +440,7 @@ class _ProductWidgetState extends State<ProductWidget> {
             });
           },
           child: TextButton(
-            onPressed: () {
-              // Add your code here to handle the button press
-            },
+            onPressed: widget.ontap,
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
                 const Color.fromARGB(255, 20, 146, 83),
