@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/category_body.dart';
+import 'package:flutter_application_1/Models/product_model.dart';
 
 import 'package:http/http.dart' as http;
 

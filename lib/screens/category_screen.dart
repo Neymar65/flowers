@@ -1,38 +1,20 @@
 import 'dart:developer';
-
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/product_model.dart';
-import 'package:flutter_application_1/screens/category_screen.dart';
 import 'package:flutter_application_1/screens/product_body.dart';
 import 'package:popover/popover.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:video_player/video_player.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class CategoryScreen extends StatefulWidget {
+  final String category;
+  const CategoryScreen({super.key, required this.category});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: HomeBody(),
-    );
-  }
+  State<CategoryScreen> createState() => _CategoryScreenState();
 }
 
-class HomeBody extends StatefulWidget {
-  const HomeBody({super.key});
-
-  @override
-  State<HomeBody> createState() => _HomeBodyState();
-}
-
-class _HomeBodyState extends State<HomeBody> {
-  String categoryTitle = 'Ähli Harytlar';
+class _CategoryScreenState extends State<CategoryScreen> {
   Future<List<ProductModel>> getProducts() async {
     final uri = Uri.parse('https://fakestoreapi.com/products');
     final list = <ProductModel>[];
@@ -87,167 +69,147 @@ class _HomeBodyState extends State<HomeBody> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: initScreen(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text('error'),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final products = snapshot.data?[0] as List<ProductModel>;
-          final categories = snapshot.data?[1];
-          return CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                floating: true,
-                toolbarHeight: 80.0,
-                expandedHeight: 80.0,
-                backgroundColor: const Color.fromARGB(255, 255, 246, 244),
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const _AppbarRow1(),
-                      _AppbarRow2(
-                        categories: categories,
-                      ),
-                      const _AppbarRow3(),
-                    ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: FutureBuilder(
+          future: initScreen(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('error'),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final products = snapshot.data?[0] as List<ProductModel>;
+            final categories = snapshot.data?[1];
+            return CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  floating: true,
+                  toolbarHeight: 80.0,
+                  expandedHeight: 80.0,
+                  backgroundColor: const Color.fromARGB(255, 255, 246, 244),
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const _AppbarRow1(),
+                        _AppbarRow2(
+                          categories: categories,
+                        ),
+                        const _AppbarRow3(),
+                      ],
+                    ),
+                  ),
+                  centerTitle: true,
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    width: double.infinity,
+                    height: 600,
+                    child: Image.asset(
+                      '3.jpg',
+                      fit: BoxFit.fill,
+                      width: double.infinity,
+                    ),
                   ),
                 ),
-                centerTitle: true,
-              ),
-              SliverToBoxAdapter(
-                child: CustomCarouselSliderWidget(),
-              ),
-              SliverLayoutBuilder(builder: (context, constraints) {
-                return SliverToBoxAdapter(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 1250.0,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'icon.png',
-                                  height: 42,
-                                  width: 42,
-                                ),
-                                const SizedBox(width: 20),
-                                const Text(
-                                  'Ähli Harytlar',
-                                  style: TextStyle(
-                                    fontSize: 42,
+                SliverLayoutBuilder(builder: (context, constraints) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: 1250.0,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Image.asset(
+                                    'icon.png',
+                                    height: 42,
+                                    width: 42,
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 32.0),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 300.0,
-                                mainAxisExtent: 400.0,
-                                mainAxisSpacing: 35.0,
-                                crossAxisSpacing: 25.0,
+                                  const SizedBox(width: 20),
+                                  Text(
+                                    widget.category,
+                                    style: TextStyle(
+                                      fontSize: 42,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              itemBuilder: (context, index) {
-                                final product = products[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ProductBody(
-                                          id: product.id,
-                                        ),
+                              const SizedBox(height: 25),
+                              const Text(
+                                'Plants make for the best house companions, suitable for all your moods and every aesthetic. Ugaoo brings you the widest variety of plants to choose from so you can buy plants online from the comfort of your home!',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              SizedBox(height: 100.0),
+                              GridView.builder(
+                                  shrinkWrap: true,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 300.0,
+                                    mainAxisExtent: 400.0,
+                                    mainAxisSpacing: 35.0,
+                                    crossAxisSpacing: 25.0,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    final product = products[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ProductBody(
+                                              id: product.id,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: ProductWidget(
+                                        ontap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => ProductBody(
+                                                id: product.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        title: product.title ?? '',
+                                        image: product.image ?? '',
+                                        price: product.price ?? 0.0,
                                       ),
                                     );
                                   },
-                                  child: ProductWidget(
-                                    ontap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => ProductBody(
-                                            id: product.id,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    title: product.title ?? '',
-                                    image: product.image ?? '',
-                                    price: product.price ?? 0.0,
-                                  ),
-                                );
-                              },
-                              itemCount:
-                                  ((products.length) > 8) ? 8 : products.length,
-                            ),
-                            SizedBox(height: 32.0),
-                            SizedBox(
-                              width: 250,
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => CategoryScreen(
-                                              category: categoryTitle,
-                                            )),
-                                  );
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                    const Color.fromARGB(255, 20, 146, 83),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.zero,
-                                    ),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  height: 45,
-                                  child: Center(
-                                    child: Text(
-                                      categoryTitle,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                                  itemCount:
+                                      // ((products.length) > 8) ? 8 : products.length,
+                                      products.length),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
-              const SliverToBoxAdapter(
-                child: ReklamaVideoWidget(),
-              )
-            ],
-          );
-        });
+                  );
+                }),
+                const SliverToBoxAdapter(
+                  child: ReklamaVideoWidget(),
+                )
+              ],
+            );
+          }),
+    );
   }
 }
 
@@ -260,7 +222,7 @@ class ReklamaVideoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 600,
+      height: 270,
       color: const Color.fromARGB(255, 239, 248, 242),
       child: const Column(
         children: [
@@ -290,43 +252,7 @@ class ReklamaVideoWidget extends StatelessWidget {
               )
             ],
           ),
-          // VideoReklamWidget()
         ],
-      ),
-    );
-  }
-}
-
-class VideoReklamWidget extends StatefulWidget {
-  const VideoReklamWidget({
-    super.key,
-  });
-
-  @override
-  State<VideoReklamWidget> createState() => _VideoReklamWidgetState();
-}
-
-class _VideoReklamWidgetState extends State<VideoReklamWidget> {
-  late FlickManager flickManager;
-  @override
-  void initState() {
-    super.initState();
-    flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.asset('plantReklam.mp4'),
-    );
-  }
-
-  @override
-  void dispose() {
-    flickManager.dispose();
-    super.dispose();
-  }
-
-  Widget build(BuildContext context) {
-    return Center(
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: FlickVideoPlayer(flickManager: flickManager),
       ),
     );
   }
@@ -481,76 +407,6 @@ class _ProductWidgetState extends State<ProductWidget> {
       ],
     );
   }
-}
-
-class CustomCarouselSliderWidget extends StatefulWidget {
-  CustomCarouselSliderWidget({super.key});
-
-  @override
-  State<CustomCarouselSliderWidget> createState() =>
-      _CustomCarouselSliderWidgetState();
-}
-
-class _CustomCarouselSliderWidgetState
-    extends State<CustomCarouselSliderWidget> {
-  int activeIndex = 0;
-
-  final itemImages = [
-    '1.jpg',
-    '2.jpg',
-    '5.jpg',
-    '3.jpg',
-    '4.jpg',
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CarouselSlider.builder(
-            options: CarouselOptions(
-              height: 800,
-              autoPlay: true,
-              viewportFraction: 1,
-              autoPlayInterval: const Duration(seconds: 7),
-              autoPlayAnimationDuration: const Duration(milliseconds: 1200),
-              enlargeCenterPage: true,
-              onPageChanged: (index, reason) =>
-                  setState(() => activeIndex = index),
-            ),
-            itemCount: itemImages.length,
-            itemBuilder: (context, index, realIndex) {
-              final itemImage = itemImages[index];
-              return buildImage(itemImage, index);
-            },
-          ),
-          const SizedBox(height: 32),
-          buildIndicator(),
-        ],
-      ),
-    );
-  }
-
-  Widget buildImage(String itemImage, int index) => Container(
-        color: Colors.grey,
-        child: Image.asset(
-          itemImage,
-          fit: BoxFit.fill,
-          width: double.infinity,
-        ),
-      );
-
-  Widget buildIndicator() => AnimatedSmoothIndicator(
-        activeIndex: activeIndex,
-        count: itemImages.length,
-        effect: const ExpandingDotsEffect(
-          dotWidth: 15,
-          dotHeight: 15,
-          activeDotColor: Color.fromARGB(255, 20, 146, 83),
-        ),
-      );
 }
 
 class _AppbarRow3 extends StatelessWidget {
@@ -838,7 +694,7 @@ class _SecondRouteState extends State<SecondRoute> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.category + 'Basylly');
+    print(widget.category);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
