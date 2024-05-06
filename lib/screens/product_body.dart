@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-
-import 'home_body.dart';
+import 'package:flutter_application_1/screens/category_body.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -16,14 +15,14 @@ class ProductBody extends StatefulWidget {
 }
 
 class _ProductBodyState extends State<ProductBody> {
-  Future<BestsellerModel> getProduct() async {
+  Future<ProductModel> getProduct() async {
     final uri = Uri.parse('https://fakestoreapi.com/products/${widget.id}');
 
     try {
       final response = await http.get(uri);
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
-        final product = BestsellerModel.fromJson(responseBody);
+        final product = ProductModel.fromJson(responseBody);
         return product;
       } else {
         throw Exception('status code is not equal to 200');

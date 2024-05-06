@@ -3,12 +3,25 @@ import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/dashboard/bodies/product_body.dart';
+import 'package:flutter_application_1/screens/category_body.dart';
+import 'package:flutter_application_1/screens/product_body.dart';
 import 'package:popover/popover.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: HomeBody(),
+    );
+  }
+}
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -18,9 +31,9 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  Future<List<BestsellerModel>> getProducts() async {
+  Future<List<ProductModel>> getProducts() async {
     final uri = Uri.parse('https://fakestoreapi.com/products');
-    final list = <BestsellerModel>[];
+    final list = <ProductModel>[];
 
     try {
       final response = await http.get(uri);
@@ -28,7 +41,7 @@ class _HomeBodyState extends State<HomeBody> {
         final responseBody = jsonDecode(response.body);
         final rawList = responseBody as Iterable?; // [] | null
         for (var element in rawList ?? []) {
-          final product = BestsellerModel.fromJson(element);
+          final product = ProductModel.fromJson(element);
           list.add(product);
         }
         log(rawList.toString());
@@ -85,7 +98,7 @@ class _HomeBodyState extends State<HomeBody> {
               child: CircularProgressIndicator(),
             );
           }
-          final products = snapshot.data?[0] as List<BestsellerModel>;
+          final products = snapshot.data?[0] as List<ProductModel>;
           final categories = snapshot.data?[1];
           return CustomScrollView(
             slivers: <Widget>[
@@ -296,134 +309,6 @@ class IconCommentWidget extends StatelessWidget {
       ],
     );
   }
-}
-
-// class BestsellersWidget extends StatefulWidget {
-//   @override
-//   State<BestsellersWidget> createState() => _BestsellersWidgetState();
-// }
-
-// class _BestsellersWidgetState extends State<BestsellersWidget> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: double.infinity,
-//       color: Colors.white,
-//       padding: EdgeInsets.all(10),
-//       child: Padding(
-//         padding: const EdgeInsets.symmetric(horizontal: 200, vertical: 50),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Row(
-//               children: [
-//                 Image.asset(
-//                   'icon.png',
-//                   height: 42,
-//                   width: 42,
-//                 ),
-//                 SizedBox(width: 20),
-//                 Text(
-//                   'Bestsellers',
-//                   style: TextStyle(
-//                     fontSize: 42,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             SizedBox(height: 10),
-//             FutureBuilder(
-//               future: getProducts(),
-//               builder: (context, snapshot) {
-//                 if (snapshot.hasError) {
-//                   return const Center(
-//                     child: Text('error'),
-//                   );
-//                 }
-//                 if (snapshot.connectionState == ConnectionState.waiting) {
-//                   return const Center(
-//                     child: CircularProgressIndicator(),
-//                   );
-//                 }
-//                 if (snapshot.hasData) {
-//                   return GridView.builder(
-//                     shrinkWrap: true,
-//                     gridDelegate:
-//                         const SliverGridDelegateWithMaxCrossAxisExtent(
-//                       maxCrossAxisExtent: 300.0,
-//                     ),
-//                     itemBuilder: (context, index) {
-//                       final product = snapshot.data![index];
-//                       return SizedBox(
-//                         height: 250.0,
-//                         child: Column(
-//                           children: [
-//                             Expanded(child: Image.network(product.image ?? '')),
-//                             Text(product.category ?? ''),
-//                             Text(product.title!),
-//                             Text('${product.price} TMT'),
-//                             Row(
-//                               children: [
-//                                 IconButton(
-//                                     onPressed: () {},
-//                                     icon: const Icon(Icons.favorite)),
-//                                 ElevatedButton(
-//                                     onPressed: () {},
-//                                     child: const Icon(Icons.favorite)),
-//                               ],
-//                             )
-//                           ],
-//                         ),
-//                       );
-//                     },
-//                     itemCount: snapshot.data?.length,
-//                   );
-//                 }
-//                 return const SizedBox();
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class BestsellerModel {
-  final int? id;
-  final String? title;
-  final double? price;
-  final String? description;
-  final String? category;
-  final String? image;
-
-  BestsellerModel({
-    this.id,
-    this.title,
-    this.price,
-    this.description,
-    this.category,
-    this.image,
-  });
-
-  factory BestsellerModel.fromJson(Map<String, dynamic> json) =>
-      BestsellerModel(
-        id: json["id"],
-        title: json["title"],
-        price: json["price"]?.toDouble(),
-        description: json["description"],
-        category: json["category"],
-        image: json["image"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "price": price,
-        "description": description,
-        "category": category,
-        "image": image,
-      };
 }
 
 class ProductWidget extends StatefulWidget {
@@ -873,10 +758,10 @@ class SecondRoute extends StatefulWidget {
 }
 
 class _SecondRouteState extends State<SecondRoute> {
-  Future<List<BestsellerModel>> getProducts() async {
+  Future<List<ProductModel>> getProducts() async {
     final uri = Uri.parse(
         'https://fakestoreapi.com/products/categories/${widget.category}');
-    final list = <BestsellerModel>[];
+    final list = <ProductModel>[];
 
     try {
       final response = await http.get(uri);
@@ -884,7 +769,7 @@ class _SecondRouteState extends State<SecondRoute> {
         final responseBody = jsonDecode(response.body);
         final rawList = responseBody as Iterable?; // [] | null
         for (var element in rawList ?? []) {
-          final product = BestsellerModel.fromJson(element);
+          final product = ProductModel.fromJson(element);
           list.add(product);
         }
         log(rawList.toString());
