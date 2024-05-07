@@ -6,6 +6,7 @@ import 'package:flutter_application_1/Models/product_model.dart';
 import 'package:flutter_application_1/screens/custom_header.dart';
 
 import 'package:http/http.dart' as http;
+late int count = 2;
 
 class ProductScreen extends StatefulWidget {
   final int? id;
@@ -61,7 +62,7 @@ class _ProductScreenState extends State<ProductScreen> {
       getCategories(),
     ]);
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,15 +138,27 @@ class _ProductScreenState extends State<ProductScreen> {
                                                 ),
                                               ],
                                             ),
-                                            Text(
-                                                product.price.toString() +
-                                                    ' TMT',
-                                                style: TextStyle(
-                                                    fontSize: 32,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.green)),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  product.price.toString() +
+                                                      ' TMT',
+                                                  style: TextStyle(
+                                                      fontSize: 32,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green),
+                                                ),
+                                                Spacer(),
+                                                NumberRow()
+                                              ],
+                                            ),
                                             TextButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                double price = product.price!;
+                                                showConfirmationDialog(
+                                                    context, price * count, count.toString());
+                                              },
                                               style: ButtonStyle(
                                                 backgroundColor:
                                                     MaterialStateProperty.all<
@@ -185,8 +198,12 @@ class _ProductScreenState extends State<ProductScreen> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 100),
                       ],
                     ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: ReklamaBottomWidget(),
                   )
                 ],
               );
@@ -194,6 +211,187 @@ class _ProductScreenState extends State<ProductScreen> {
 
             return const SizedBox();
           }),
+    );
+  }
+}
+
+void showConfirmationDialog(BuildContext context, double price, String count) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        title: Text(
+          'Jemi Bahasy: ${price} TMT',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          '''Harydyň sany: ${count}
+Siz Hakykatdanam Zakaz Etmek Isleýäňizmi?''',
+          style: TextStyle(fontSize: 20),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false); // No button pressed
+            },
+            child: Text(
+              'Ýok',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.red,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true); // Yes button pressed
+            },
+            child: Text(
+              'Hawa',
+              style: TextStyle(
+                fontSize: 18,
+                color: Color.fromARGB(255, 20, 146, 83),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class NumberRow extends StatefulWidget {
+  @override
+  _NumberRowState createState() => _NumberRowState();
+}
+
+class _NumberRowState extends State<NumberRow> {
+  int number = 1; // Initial number
+  
+
+  void decreaseNumber() {
+    if (number > 1) {
+      setState(() {
+        number--;
+      });
+    }
+  }
+
+  void increaseNumber() {
+    setState(() {
+      number++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    count = number;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(Icons.remove),
+          onPressed: decreaseNumber,
+          color: const Color.fromARGB(255, 20, 146, 83),
+        ),
+        SizedBox(width: 16.0),
+        Text(
+          count.toString(),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(width: 16.0),
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () {
+            increaseNumber();
+          },
+          color: const Color.fromARGB(255, 20, 146, 83),
+        ),
+      ],
+    );
+  }
+}
+
+class ReklamaBottomWidget extends StatelessWidget {
+  const ReklamaBottomWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 270,
+      color: const Color.fromARGB(255, 239, 248, 242),
+      child: const Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text(
+              'Biziň Bakjamyz',
+              style: TextStyle(
+                fontSize: 42,
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconCommentWidget(
+                icon: Icons.autorenew_outlined,
+                text: 'Ygtybarly we Gaýtadan Ulanylýan',
+              ),
+              IconCommentWidget(
+                icon: Icons.assignment_outlined,
+                text: 'Amatly Bahadan',
+              ),
+              IconCommentWidget(
+                icon: Icons.yard_outlined,
+                text: 'Owadan Görnüşli',
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IconCommentWidget extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const IconCommentWidget({
+    super.key,
+    required this.icon,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 50.0,
+        ),
+        Container(
+          width: 300,
+          child: Text(
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            text,
+            style: const TextStyle(
+              fontSize: 30,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

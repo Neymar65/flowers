@@ -68,7 +68,13 @@ class _AppbarRow2 extends StatelessWidget {
         const SizedBox(width: 40),
         CustomTextButton(
           text: "Sowgatlar",
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => CategoryScreen(category: 'jewelery')),
+            );
+          },
         ),
         const SizedBox(width: 40),
         CustomTextButton(
