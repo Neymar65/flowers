@@ -1,8 +1,5 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Models/product_model.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter_application_1/screens/category_screen.dart';
 import 'package:popover/popover.dart';
 
 class CustomHeader extends StatefulWidget {
@@ -16,28 +13,27 @@ class CustomHeader extends StatefulWidget {
 class _CustomHeaderState extends State<CustomHeader> {
   @override
   Widget build(BuildContext context) {
-          return SliverAppBar(
-                floating: true,
-                toolbarHeight: 80.0,
-                expandedHeight: 80.0,
-                backgroundColor: const Color.fromARGB(255, 255, 246, 244),
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const _AppbarRow1(),
-                      _AppbarRow2(
-                        categories: widget.categories,
-                      ),
-                      const _AppbarRow3(),
-                    ],
-                  ),
-                ),
-                centerTitle: true,
-              );
+    return SliverAppBar(
+      floating: true,
+      toolbarHeight: 80.0,
+      expandedHeight: 80.0,
+      backgroundColor: const Color.fromARGB(255, 255, 246, 244),
+      flexibleSpace: FlexibleSpaceBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const _AppbarRow1(),
+            _AppbarRow2(
+              categories: widget.categories,
+            ),
+            const _AppbarRow3(),
+          ],
+        ),
+      ),
+      centerTitle: true,
+    );
   }
 }
-
 
 class _AppbarRow3 extends StatelessWidget {
   const _AppbarRow3({
@@ -265,76 +261,37 @@ class ListItems extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(8),
         children: categories.map((e) {
-          return InkWell(
-            onTap: () {
-              Navigator.of(context)
-                ..pop()
-                ..push(
-                  MaterialPageRoute<SecondRoute>(
-                    builder: (context) => SecondRoute(
-                      category: e,
+          return Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.of(context)
+                    ..pop()
+                    ..push(
+                      MaterialPageRoute<CategoryScreen>(
+                        builder: (context) => CategoryScreen(
+                          category: e,
+                        ),
+                      ),
+                    );
+                },
+                child: Container(
+                  height: 50,
+                  color: const Color.fromARGB(255, 255, 246, 244),
+                  child: Center(
+                      child: Text(
+                    e,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 20, 146, 83),
+                      fontSize: 18.0,
                     ),
-                  ),
-                );
-            },
-            child: Container(
-              height: 50,
-              color: Colors.amber[100],
-              child: Center(child: Text(e)),
-            ),
+                  )),
+                ),
+              ),
+              Divider(),
+            ],
           );
         }).toList(),
-      ),
-    );
-  }
-}
-
-class SecondRoute extends StatefulWidget {
-  final String category;
-  const SecondRoute({super.key, required this.category});
-
-  @override
-  State<SecondRoute> createState() => _SecondRouteState();
-}
-
-class _SecondRouteState extends State<SecondRoute> {
-  Future<List<ProductModel>> getProducts() async {
-    final uri = Uri.parse(
-        'https://fakestoreapi.com/products/categories/${widget.category}');
-    final list = <ProductModel>[];
-
-    try {
-      final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        final rawList = responseBody as Iterable?; // [] | null
-        for (var element in rawList ?? []) {
-          final product = ProductModel.fromJson(element);
-          list.add(product);
-        }
-        log(rawList.toString());
-      } else {
-        throw Exception('status code is not equal to 200');
-      }
-    } catch (e) {
-      log(e.toString());
-    }
-    return list;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print(widget.category + 'Basylly');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.category),
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Go back!'),
-        ),
       ),
     );
   }

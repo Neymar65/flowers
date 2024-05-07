@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/product_model.dart';
 import 'package:flutter_application_1/screens/custom_header.dart';
-import 'package:flutter_application_1/screens/product_body.dart';
+import 'package:flutter_application_1/screens/product_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +17,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   Future<List<ProductModel>> getProducts() async {
     final uri = Uri.parse(
-        'https://fakestoreapi.com/products/categories/${widget.category}');
+        'https://fakestoreapi.com/products/category/${widget.category}');
     final list = <ProductModel>[];
 
     try {
@@ -153,7 +153,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => ProductBody(
+                                            builder: (_) => ProductScreen(
                                               id: product.id,
                                             ),
                                           ),
@@ -164,7 +164,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) => ProductBody(
+                                              builder: (_) => ProductScreen(
                                                 id: product.id,
                                               ),
                                             ),
@@ -176,9 +176,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       ),
                                     );
                                   },
-                                  itemCount:
-                                      // ((products.length) > 8) ? 8 : products.length,
-                                      products.length),
+                                  itemCount: ((products.length) > 8)
+                                      ? 8
+                                      : products.length),
+                              // products.length),
                             ],
                           ),
                         ),

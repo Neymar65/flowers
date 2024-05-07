@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/product_model.dart';
 import 'package:flutter_application_1/screens/all_product_screen.dart';
 import 'package:flutter_application_1/screens/custom_header.dart';
-import 'package:flutter_application_1/screens/product_body.dart';
+import 'package:flutter_application_1/screens/product_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:convert';
@@ -150,7 +150,7 @@ class _HomeBodyState extends State<HomeBody> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => ProductBody(
+                                        builder: (_) => ProductScreen(
                                           id: product.id,
                                         ),
                                       ),
@@ -161,7 +161,7 @@ class _HomeBodyState extends State<HomeBody> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => ProductBody(
+                                          builder: (_) => ProductScreen(
                                             id: product.id,
                                           ),
                                         ),
@@ -184,8 +184,7 @@ class _HomeBodyState extends State<HomeBody> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => AllProductScreen(
-                                            )),
+                                        builder: (_) => AllProductScreen()),
                                   );
                                 },
                                 style: ButtonStyle(

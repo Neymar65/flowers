@@ -2,12 +2,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/product_model.dart';
 import 'package:flutter_application_1/screens/custom_header.dart';
-import 'package:flutter_application_1/screens/product_body.dart';
+import 'package:flutter_application_1/screens/product_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AllProductScreen extends StatefulWidget {
-  const AllProductScreen({super.key,});
+  const AllProductScreen({
+    super.key,
+  });
 
   @override
   State<AllProductScreen> createState() => _AllProductScreenState();
@@ -151,7 +153,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => ProductBody(
+                                            builder: (_) => ProductScreen(
                                               id: product.id,
                                             ),
                                           ),
@@ -162,7 +164,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) => ProductBody(
+                                              builder: (_) => ProductScreen(
                                                 id: product.id,
                                               ),
                                             ),
