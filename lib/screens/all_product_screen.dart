@@ -6,18 +6,16 @@ import 'package:flutter_application_1/screens/product_body.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class CategoryScreen extends StatefulWidget {
-  final String category;
-  const CategoryScreen({super.key, required this.category});
+class AllProductScreen extends StatefulWidget {
+  const AllProductScreen({super.key,});
 
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  State<AllProductScreen> createState() => _AllProductScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen> {
+class _AllProductScreenState extends State<AllProductScreen> {
   Future<List<ProductModel>> getProducts() async {
-    final uri = Uri.parse(
-        'https://fakestoreapi.com/products/categories/${widget.category}');
+    final uri = Uri.parse('https://fakestoreapi.com/products');
     final list = <ProductModel>[];
 
     try {
@@ -121,7 +119,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   ),
                                   const SizedBox(width: 20),
                                   Text(
-                                    widget.category,
+                                    'Ähli Harytlar',
                                     style: TextStyle(
                                       fontSize: 42,
                                     ),

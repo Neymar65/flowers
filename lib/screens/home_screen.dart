@@ -1,12 +1,11 @@
 import 'dart:developer';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/product_model.dart';
-import 'package:flutter_application_1/screens/category_screen.dart';
+import 'package:flutter_application_1/screens/all_product_screen.dart';
+import 'package:flutter_application_1/screens/custom_header.dart';
 import 'package:flutter_application_1/screens/product_body.dart';
-import 'package:popover/popover.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:convert';
@@ -32,7 +31,6 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  String categoryTitle = 'Ähli Harytlar';
   Future<List<ProductModel>> getProducts() async {
     final uri = Uri.parse('https://fakestoreapi.com/products');
     final list = <ProductModel>[];
@@ -104,25 +102,7 @@ class _HomeBodyState extends State<HomeBody> {
           final categories = snapshot.data?[1];
           return CustomScrollView(
             slivers: <Widget>[
-              SliverAppBar(
-                floating: true,
-                toolbarHeight: 80.0,
-                expandedHeight: 80.0,
-                backgroundColor: const Color.fromARGB(255, 255, 246, 244),
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const _AppbarRow1(),
-                      _AppbarRow2(
-                        categories: categories,
-                      ),
-                      const _AppbarRow3(),
-                    ],
-                  ),
-                ),
-                centerTitle: true,
-              ),
+              CustomHeader(categories: categories),
               SliverToBoxAdapter(
                 child: CustomCarouselSliderWidget(),
               ),
@@ -204,8 +184,7 @@ class _HomeBodyState extends State<HomeBody> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => CategoryScreen(
-                                              category: categoryTitle,
+                                        builder: (_) => AllProductScreen(
                                             )),
                                   );
                                 },
@@ -225,7 +204,7 @@ class _HomeBodyState extends State<HomeBody> {
                                   height: 45,
                                   child: Center(
                                     child: Text(
-                                      categoryTitle,
+                                      'Ähli Harytlar',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,
@@ -551,305 +530,4 @@ class _CustomCarouselSliderWidgetState
           activeDotColor: Color.fromARGB(255, 20, 146, 83),
         ),
       );
-}
-
-class _AppbarRow3 extends StatelessWidget {
-  const _AppbarRow3({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      children: [
-        OutlinedTextFieldExample(),
-        UserIconButton(),
-      ],
-    );
-  }
-}
-
-class _AppbarRow2 extends StatelessWidget {
-  final List<String> categories;
-  const _AppbarRow2({
-    super.key,
-    required this.categories,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Category(
-          categories: categories,
-        ),
-        const SizedBox(width: 40),
-        CustomTextButton(
-          text: "Sowgatlar",
-          onPressed: () {},
-        ),
-        const SizedBox(width: 40),
-        CustomTextButton(
-          text: "Sargytlar",
-          onPressed: () {},
-        ),
-      ],
-    );
-  }
-}
-
-class _AppbarRow1 extends StatelessWidget {
-  const _AppbarRow1({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      'flower2.png',
-      width: 70,
-      height: 55,
-      fit: BoxFit.cover,
-    );
-  }
-}
-
-class UserIconButton extends StatefulWidget {
-  const UserIconButton({super.key});
-
-  @override
-  _UserIconButtonState createState() => _UserIconButtonState();
-}
-
-class _UserIconButtonState extends State<UserIconButton> {
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {},
-      icon: const Icon(
-        Icons.person_outline,
-        color: Color.fromARGB(255, 20, 146, 83), // Change the hover color here
-      ),
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      padding: const EdgeInsets.all(12.0),
-      iconSize: 28.0,
-      visualDensity: VisualDensity.compact,
-      alignment: Alignment.center,
-      color: Colors.transparent, // Set the background color to transparent
-      hoverColor: Colors.transparent,
-      splashRadius: 24.0,
-      focusColor: Colors.transparent,
-      enableFeedback: true,
-      mouseCursor: SystemMouseCursors.click,
-    );
-  }
-}
-
-class OutlinedTextFieldExample extends StatelessWidget {
-  const OutlinedTextFieldExample({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300,
-      height: 35,
-      child: TextField(
-        cursorColor: Colors.grey[600],
-        style: TextStyle(
-          color: Colors.grey[600],
-        ),
-        decoration: InputDecoration(
-            prefixIconColor: const Color.fromARGB(255, 20, 146, 83),
-            prefixIcon: const Icon(Icons.search),
-            labelStyle: const TextStyle(fontSize: 15.0),
-            labelText: 'Gözleg',
-            floatingLabelStyle:
-                const TextStyle(color: Color.fromARGB(255, 20, 146, 83)),
-            hintText: 'Söz giriz...',
-            isDense: true,
-            contentPadding: const EdgeInsets.all(8),
-            hintStyle: const TextStyle(fontSize: 15.0),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
-              borderSide: const BorderSide(color: Colors.amber),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 20, 146, 83)),
-              borderRadius: BorderRadius.circular(15.0),
-            )),
-      ),
-    );
-  }
-}
-
-class Category extends StatelessWidget {
-  final List<String> categories;
-  const Category({Key? key, required this.categories}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomTextButton(
-      text: 'Kategoriýalar',
-      onPressed: () {
-        showPopover(
-          context: context,
-          bodyBuilder: (context) => ListItems(
-            categories: categories,
-          ),
-          onPop: () => print('Popover was popped!'),
-          direction: PopoverDirection.bottom,
-          width: 200,
-          height: 400,
-          arrowHeight: 15,
-          arrowWidth: 30,
-        );
-      },
-    );
-  }
-}
-
-class CustomTextButton extends StatefulWidget {
-  final String text;
-  final VoidCallback onPressed;
-
-  const CustomTextButton({
-    Key? key,
-    required this.text,
-    required this.onPressed,
-  }) : super(key: key);
-
-  @override
-  _CustomTextButtonState createState() => _CustomTextButtonState();
-}
-
-class _CustomTextButtonState extends State<CustomTextButton> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      hoverColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onTap: widget.onPressed,
-      onHover: (value) {
-        setState(() {
-          _isHovered = value;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              style: BorderStyle.solid,
-              color: _isHovered
-                  ? const Color.fromARGB(255, 87, 126, 125)
-                  : Colors.transparent,
-              width: 2.0,
-            ),
-          ),
-        ),
-        child: Text(
-          widget.text,
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: _isHovered
-                ? const Color.fromARGB(255, 87, 140, 125)
-                : const Color.fromARGB(255, 20, 146, 83),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ListItems extends StatelessWidget {
-  final List<String> categories;
-  const ListItems({Key? key, required this.categories}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView(
-        padding: const EdgeInsets.all(8),
-        children: categories.map((e) {
-          return InkWell(
-            onTap: () {
-              Navigator.of(context)
-                ..pop()
-                ..push(
-                  MaterialPageRoute<SecondRoute>(
-                    builder: (context) => SecondRoute(
-                      category: e,
-                    ),
-                  ),
-                );
-            },
-            child: Container(
-              height: 50,
-              color: Colors.amber[100],
-              child: Center(child: Text(e)),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class SecondRoute extends StatefulWidget {
-  final String category;
-  const SecondRoute({super.key, required this.category});
-
-  @override
-  State<SecondRoute> createState() => _SecondRouteState();
-}
-
-class _SecondRouteState extends State<SecondRoute> {
-  Future<List<ProductModel>> getProducts() async {
-    final uri = Uri.parse(
-        'https://fakestoreapi.com/products/categories/${widget.category}');
-    final list = <ProductModel>[];
-
-    try {
-      final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        final rawList = responseBody as Iterable?; // [] | null
-        for (var element in rawList ?? []) {
-          final product = ProductModel.fromJson(element);
-          list.add(product);
-        }
-        log(rawList.toString());
-      } else {
-        throw Exception('status code is not equal to 200');
-      }
-    } catch (e) {
-      log(e.toString());
-    }
-    return list;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print(widget.category + 'Basylly');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.category),
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Go back!'),
-        ),
-      ),
-    );
-  }
 }
